@@ -1,12 +1,14 @@
 FASTA_FILE=$1
 
-num_sequences=$(grep -c ">" "$FASTA_FILE")
-seq_length=$(grep -v ">" "$FASTA_FILE" | paste -sd "" - | awk '{print length}')
+num_sequences=$(grep -c ">" "$1")
+seq_length=$(grep -v ">" "$1" | paste -sd "" - | awk '{print length}')
 total_length=$(echo "$seq_length" | awk '{sum+=$1} END {print sum}')
-longest_seq=$(echo "$seq_length" | sort -n | head -1)
-shortest_seq=$(echo "$seq_length" | sort -nr | head -1)
+longest_seq=$(awk '!/>/ {if (length > max) max = length} END {print max}' "$1")
+shortest_seq=$(awk '!/>/ {if (length < min) min = length} END {print min}' "$1")
 avg_length=$(awk "BEGIN {print $total_length/$num_sequences}")
-gc_percent=$()
+gc_percent=$(grep -v ">" "$1" | grep -o "[GCgc]" | wc -l)
+
+
  
 
 
